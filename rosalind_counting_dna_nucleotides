@@ -1,0 +1,30 @@
+#!/usr/bin/env python
+
+import sys
+
+if len(sys.argv) != 2:
+	print "only the parameter of input file name should be passed."
+	sys.exit(0)
+try:
+	inputfile = open(sys.argv[1], 'r')
+except IOError as e:
+	print "Cannot open input file. Error message : {0}".format(e.strerror)
+	exit(0)
+try:
+	line = inputfile.readline()
+except IOError as e:
+	print "Cannot read input file. Error message : {0}".format(e.strerror)
+	exit(0)
+finally:
+	inputfile.close()
+inclusions = [0,0,0,0]
+for char in line:
+    if char == 'A':
+        inclusions[0] +=1
+    elif char == 'C':
+        inclusions[1] +=1
+    elif char == 'G':
+        inclusions[2] +=1
+    elif char == 'T' :
+        inclusions[3] +=1
+print str(inclusions[0]) + " " + str(inclusions[1]) + " " + str(inclusions[2]) + " " + str(inclusions[3])

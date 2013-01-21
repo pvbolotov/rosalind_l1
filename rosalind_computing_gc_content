@@ -11,32 +11,21 @@ except IOError as e:
 	print "Cannot open input file. Error message : {0}".format(e.strerror)
 	exit(0)
 try:
-	maxindex = 0.0
-	maxname = ""
-	curindex = 0.0
-	curdnalength = 1
-	curname = ""
-	for line in inputfile:
-		line = line.rstrip("\r\n")
-		if line[0] == '>':
-			curindex = curindex*100/curdnalength
-			if curindex > maxindex:
-				maxindex = curindex
-				maxname = curname
-			curname = line[1:]
-			curdnalength = 0
-			curindex = 0
-		else:
-			curdnalength+=len(line)
-			for char in line:
-				if char == 'G' or char == 'C':
-					curindex+=1.0
-	curindex = curindex*100/curdnalength
-	if curindex > maxindex:
-		maxindex = curindex
-		maxname = curname
-	print maxname
-	print str(round(maxindex, 6)) + "%"
+	max_name, max_gc_index = "", 0
+	buf = inputfile.readline().rstrip("\r\n")
+	while len(buf)>0:
+		sequence_name, sequence_includes, sequence_length = buf[1:], 0 , 0
+		buf = inputfile.readline().rstrip("\r\n")
+		while not buf.startswith('>') and len(buf)>0:
+			sequence_length += len(buf)
+			for char in buf:
+				if char == 'C' or char == 'G':
+					sequence_includes +=1
+			buf = inputfile.readline().rstrip("\r\n")
+		if(sequence_includes/float(sequence_length) > max_gc_index):
+			max_gc_index = sequence_includes/float(sequence_length)
+			max_name = sequence_name
+	print('%s\n%.6f%%' % (max_name, max_gc_index*100))
 except IOError as e:
 	print "Cannot read input file. Error message : {0}".format(e.strerror)
 	exit(0)
